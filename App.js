@@ -1,23 +1,46 @@
-import logo from './public/logo.svg';
+// external imports
+import React, { useState } from "react";
+
+// internal imports
+import state from "./public/data/state.json";
 import './App.css';
 
 function App() {
+  const [activeBudges, setActiveBudges] = useState([]);
+  const { pickPoints } = state;
+
+  const handleClick = () => {
+    setActiveBudges(activeBudges);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className="cards-container">
+        {pickPoints.map(({
+          address,
+          budgets,
+          latitude,
+          longitude,
+        }) => (
+          <div className="card-container">
+            <h2>
+              {address}
+            </h2>
+            {budgets.map(budge => (
+              <button
+                type="button"
+                className="button"
+                onClick={handleClick}
+              >
+                {budge}
+              </button>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="map-container">
+
+      </div>
     </div>
   );
 }
