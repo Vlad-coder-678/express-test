@@ -3,9 +3,8 @@ import React, { useState } from "react";
 
 // internal imports
 import state from "./public/data/state.json";
-import './App.css';
 
-function App() {
+const App = () => {
   const [activeBudges, setActiveBudges] = useState([]);
   const { pickPoints } = state;
 
@@ -19,18 +18,16 @@ function App() {
         {pickPoints.map(({
           address,
           budgets,
-          latitude,
-          longitude,
         }) => (
           <div className="card-container">
             <h2>
               {address}
             </h2>
-            {budgets.map(budge => (
+            {budgets.map((budge) => (
               <button
                 type="button"
                 className="button"
-                onClick={handleClick}
+                onClick={() => handleClick(address)}
               >
                 {budge}
               </button>
@@ -39,10 +36,10 @@ function App() {
         ))}
       </div>
       <div className="map-container">
-
+        asdsad
       </div>
     </div>
   );
-}
+};
 
 export default App;
