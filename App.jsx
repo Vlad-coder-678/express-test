@@ -2,7 +2,11 @@
 import React, { useState } from "react";
 
 // internal imports
-import state from "./public/data/state.json";
+// components
+import BudgeComponent from "components/BudgeComponent";
+import MapComponent from "components/MapComponent";
+// public
+import state from "public/data/state.json";
 
 const App = () => {
   const [activeBudges, setActiveBudges] = useState([]);
@@ -23,21 +27,16 @@ const App = () => {
               {address}
             </h2>
             {budgets.map((budge) => (
-              <button
+              <BudgeComponent
+                budge={budge}
                 key={`${address} ${budge}`}
-                type="button"
-                className="button"
                 onClick={() => handleClick(address)}
-              >
-                {budge}
-              </button>
+              />
             ))}
           </div>
         ))}
       </div>
-      <div className="map-container">
-        asdsad
-      </div>
+      <MapComponent />
     </div>
   );
 };

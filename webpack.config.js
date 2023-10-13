@@ -1,5 +1,4 @@
 // external imports
-const fs = require("fs");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
@@ -10,18 +9,13 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 
 // internal imports
-const paths = require("./settings/paths");
-const {
-  cssRegex,
-  cssModuleRegex,
-  sassRegex,
-  sassModuleRegex,
-} = require("./settings/regexes");
-
-const useTypeScript = fs.existsSync(paths.appTsConfig);
+const paths = require("./config/paths");
+const { cssRegex, sassRegex } = require("./config/regexes");
+const { getCompilerOptions } = require("./config/utils");
 
 module.exports = ({ mode }) => {
-  const isProduction = mode === "production";
+  const isProductionMode = mode === "production";
+  const compilerOptions = getCompilerOptions();
 
   return {
     mode,
@@ -33,7 +27,11 @@ module.exports = ({ mode }) => {
       path: paths.appBuild,
     },
     resolve: {
-      extensions: paths.moduleFileExtensions.map((ext) => `.${ext}`).filter((ext) => useTypeScript || !ext.includes("ts")),
+      alias: {
+        ...(compilerOptions.paths || {}),
+      },
+      extensions: paths.moduleFileExtensions.map((ext) => `.${ext}`),
+      preferRelative: true
     },
     module: {
       rules: [
@@ -42,24 +40,17 @@ module.exports = ({ mode }) => {
           exclude: /node_modules/,
           use: ["babel-loader"]
         },
-        useTypeScript && {
-          test: /\.tsx?$/,
-          exclude: /node_modules/,
-          use: ["ts-loader"],
-        },
         {
           test: cssRegex,
-          exclude: cssModuleRegex,
           use: [
-            isProduction ? { loader: MiniCssExtractPlugin.loader, options: { suorceMap: true } } : "style-loader",
+            isProductionMode ? { loader: MiniCssExtractPlugin.loader, options: { suorceMap: true } } : "style-loader",
             "css-loader",
           ]
         },
         {
           test: sassRegex,
-          exclude: sassModuleRegex,
           use: [
-            isProduction ? { loader: MiniCssExtractPlugin.loader, options: { suorceMap: true } } : "style-loader",
+            isProductionMode ? { loader: MiniCssExtractPlugin.loader, options: { suorceMap: true } } : "style-loader",
             "css-loader",
             "postcss-loader",
             "sass-loader"
@@ -74,7 +65,7 @@ module.exports = ({ mode }) => {
     plugins: [
       new HtmlWebpackPlugin({
         favicon: path.join(__dirname, "public", "favicon.ico"),
-        minify: isProduction ? {
+        minify: isProductionMode ? {
           collapseWhitespace: true
         } : false,
         template: path.join(__dirname, "public", "index.html"),
@@ -85,22 +76,22 @@ module.exports = ({ mode }) => {
       // new CopyWebpackPlugin({
       //   patterns: [{ from: "public/image", to: "build/image" }],
       // }),
-      isProduction && new MiniCssExtractPlugin({
+      isProductionMode && new MiniCssExtractPlugin({
         filename: "[name].css",
       }),
       new ESLintPlugin({
-        extensions: ["js", "jsx", "ts", "tsx"],
+        extensions: ["js", "jsx"],
         failOnError: true,
       }),
     ].filter(Boolean),
     optimization: {
-      minimize: isProduction,
+      minimize: isProductionMode,
       // minimizer: ["...", new CssMinimizerPlugin()],
     },
     devServer: {
-      compress: isProduction, // сжатие gzip
+      compress: isProductionMode, // сжатие gzip
       hot: true, // горячая перезагрузка при изменении в файле
-      port: 3000, // номер порта для прослушивания запросов
+      port: 3001, // номер порта для прослушивания запросов
       // применение заголовков ко всем ответам
       headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*", "Access-Control-Allow-Methods": "*" },
       // для использования API history
