@@ -6,7 +6,6 @@ import state from "./public/data/state.json";
 
 const App = () => {
   const [activeBudges, setActiveBudges] = useState([]);
-  const { pickPoints } = state;
 
   const handleClick = () => {
     setActiveBudges(activeBudges);
@@ -15,16 +14,17 @@ const App = () => {
   return (
     <div className="container">
       <div className="cards-container">
-        {pickPoints.map(({
+        {state.pickPoints.map(({
           address,
           budgets,
         }) => (
-          <div className="card-container">
+          <div key={address} className="card-container">
             <h2>
               {address}
             </h2>
             {budgets.map((budge) => (
               <button
+                key={`${address} ${budge}`}
                 type="button"
                 className="button"
                 onClick={() => handleClick(address)}
