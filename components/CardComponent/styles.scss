@@ -1,0 +1,38 @@
+@import "../../public/styles/variables.scss";
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: $card-background-color;
+  padding: 10px 14px 9px;
+  border: $card-border;
+  box-shadow: $card-shadow;
+
+  &:hover {
+    background-color: $card-background-color-active;
+  }
+}
+
+.card-title {
+  color: $card-title-color;
+  font-size: 16px;
+}
+
+.card-button-container {
+  display: flex;
+  gap: 12px;
+}
+
+.card-button {
+  background-color: $card-button-background-color;
+  color: $card-button-color;
+  line-height: $card-button-height;
+  padding: 0 15px;
+  border-radius: 2px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $card-button-background-color-hover;
+  }
+}

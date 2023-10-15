@@ -1,10 +1,13 @@
+// external imports
 import React from "react";
 
+// internal imports
+// styles
 import "./styles.scss";
 
-const MapComponent = () => (
+const MapComponent = ({ activePickPoints }) => (
   <div className="map-container">
-    map
+    {activePickPoints}
   </div>
 );
 

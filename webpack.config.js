@@ -1,4 +1,6 @@
+/* eslint-disable global-require, import/no-dynamic-require */
 // external imports
+const fs = require("fs");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
@@ -8,10 +10,35 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 
-// internal imports
-const paths = require("./config/paths");
-const { cssRegex, sassRegex } = require("./config/regexes");
-const { getCompilerOptions } = require("./config/utils");
+const resolveApp = (relativePath) => path.resolve(__dirname, relativePath);
+
+const paths = {
+  appBuild: resolveApp("build"),
+  appEnv: resolveApp("./.env"),
+  appJsConfig: resolveApp("./jsconfig.json"),
+  appHtml: resolveApp(path.join(__dirname, "public", "index.html")),
+  appIndexJs: resolveApp("./index.jsx"),
+  appFavicon: resolveApp(path.join(__dirname, "public", "favicon.ico")),
+  appNodeModules: resolveApp("./node_modules"),
+};
+
+/**
+ * @description Возвращает compilerOptions из jsconfig.json
+ */
+const getCompilerOptions = () => {
+  const hasJsConfig = fs.existsSync(paths.appJsConfig);
+
+  if (!hasJsConfig) throw new Error("Конфиг jsconfig.json отсутствует. Пожалуйста, добавьте jsconfig.json");
+
+  const config = require(paths.appJsConfig);
+
+  return config?.compilerOptions || {};
+};
+
+const moduleFileExtensions = [
+  "js",
+  "jsx",
+];
 
 module.exports = ({ mode }) => {
   const isProductionMode = mode === "production";
@@ -21,17 +48,16 @@ module.exports = ({ mode }) => {
     mode,
     entry: paths.appIndexJs,
     output: {
-      assetModuleFilename: "images/[name][hash][ext]",
+      assetModuleFilename: "images/[name][ext]",
       clean: true,
-      filename: "[name].js",
+      filename: "bundle.js",
       path: paths.appBuild,
     },
     resolve: {
       alias: {
         ...(compilerOptions.paths || {}),
       },
-      extensions: paths.moduleFileExtensions.map((ext) => `.${ext}`),
-      preferRelative: true
+      extensions: moduleFileExtensions.map((ext) => `.${ext}`)
     },
     module: {
       rules: [
@@ -41,14 +67,7 @@ module.exports = ({ mode }) => {
           use: ["babel-loader"]
         },
         {
-          test: cssRegex,
-          use: [
-            isProductionMode ? { loader: MiniCssExtractPlugin.loader, options: { suorceMap: true } } : "style-loader",
-            "css-loader",
-          ]
-        },
-        {
-          test: sassRegex,
+          test: /\.scss$/,
           use: [
             isProductionMode ? { loader: MiniCssExtractPlugin.loader, options: { suorceMap: true } } : "style-loader",
             "css-loader",
@@ -57,22 +76,20 @@ module.exports = ({ mode }) => {
           ]
         },
         {
-          test: /\.(png|svg|jpe?g|gif|mp3|woff2?|ttf|eot)$/i,
-          type: "assets/resource",
+          test: /\.woff2$/i,
+          type: "asset/resource",
         }
       ].filter(Boolean),
     },
     plugins: [
       new HtmlWebpackPlugin({
-        favicon: path.join(__dirname, "public", "favicon.ico"),
+        favicon: paths.appFavicon,
         minify: isProductionMode ? {
           collapseWhitespace: true
         } : false,
-        template: path.join(__dirname, "public", "index.html"),
+        template: paths.appHtml,
       }),
-      new Dotenv({
-        path: "./.env",
-      }),
+      new Dotenv({ path: paths.appEnv }),
       // new CopyWebpackPlugin({
       //   patterns: [{ from: "public/image", to: "build/image" }],
       // }),
@@ -80,7 +97,7 @@ module.exports = ({ mode }) => {
         filename: "[name].css",
       }),
       new ESLintPlugin({
-        extensions: ["js", "jsx"],
+        extensions: moduleFileExtensions,
         failOnError: true,
       }),
     ].filter(Boolean),
@@ -89,13 +106,14 @@ module.exports = ({ mode }) => {
       // minimizer: ["...", new CssMinimizerPlugin()],
     },
     devServer: {
-      compress: isProductionMode, // сжатие gzip
-      hot: true, // горячая перезагрузка при изменении в файле
-      port: 3001, // номер порта для прослушивания запросов
-      // применение заголовков ко всем ответам
-      headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*", "Access-Control-Allow-Methods": "*" },
-      // для использования API history
-      // Сюда же в качестве объекта можно передать параметры для реарйтов https://webpack.js.org/configuration/dev-server/#devserverhistoryapifallback
+      compress: isProductionMode,
+      hot: true,
+      port: 3000,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "*"
+      },
       historyApiFallback: true
     },
     devtool: "inline-source-map",

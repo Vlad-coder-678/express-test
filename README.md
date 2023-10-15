@@ -43,4 +43,4 @@
 
 <!-- links -->
 
-[site-layout]: ./public/wiki/template.psd
+[site-layout]: ./public/data/template.psd
