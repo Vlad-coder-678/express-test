@@ -42,7 +42,8 @@ const getZoom = (points) => {
     case (getMaxDistanceBetWeenPoints(points) > 50): return 2;
     case (getMaxDistanceBetWeenPoints(points) > 10): return 4;
     case (getMaxDistanceBetWeenPoints(points) > 5): return 6;
-    default: return 12;
+    case (getMaxDistanceBetWeenPoints(points) > 1): return 8;
+    default: return 10;
   }
 };
 
