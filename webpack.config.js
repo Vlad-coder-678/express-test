@@ -4,10 +4,9 @@ const fs = require("fs");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
-// const autoprefixer = require("autoprefixer");
-// const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 
 const resolveApp = (relativePath) => path.resolve(__dirname, relativePath);
@@ -69,17 +68,13 @@ module.exports = ({ mode }) => {
         {
           test: /\.scss$/,
           use: [
-            isProductionMode ? { loader: MiniCssExtractPlugin.loader, options: { suorceMap: true } } : "style-loader",
+            isProductionMode ? { loader: MiniCssExtractPlugin.loader } : "style-loader",
             "css-loader",
             "postcss-loader",
             "sass-loader"
           ]
         },
-        {
-          test: /\.woff2$/i,
-          type: "asset/resource",
-        }
-      ].filter(Boolean),
+      ],
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -90,9 +85,9 @@ module.exports = ({ mode }) => {
         template: paths.appHtml,
       }),
       new Dotenv({ path: paths.appEnv }),
-      // new CopyWebpackPlugin({
-      //   patterns: [{ from: "public/image", to: "build/image" }],
-      // }),
+      new CopyWebpackPlugin({
+        patterns: [{ from: "public/images", to: "build/images" }],
+      }),
       isProductionMode && new MiniCssExtractPlugin({
         filename: "[name].css",
       }),
@@ -103,7 +98,7 @@ module.exports = ({ mode }) => {
     ].filter(Boolean),
     optimization: {
       minimize: isProductionMode,
-      // minimizer: ["...", new CssMinimizerPlugin()],
+      minimizer: ["...", new CssMinimizerPlugin()],
     },
     devServer: {
       compress: isProductionMode,
@@ -116,6 +111,8 @@ module.exports = ({ mode }) => {
       },
       historyApiFallback: true
     },
-    devtool: "inline-source-map",
+    performance: {
+      hints: false,
+    }
   };
 };

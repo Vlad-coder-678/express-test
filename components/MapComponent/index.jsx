@@ -43,7 +43,7 @@ const MapComponent = ({ activePoints, points }) => {
               options={{
                 iconLayout: "default#image",
                 iconImageSize: [50, 50],
-                iconImageHref: "/pointer.svg"
+                iconImageHref: "images/pointer.svg"
               }}
             />
           ))}
