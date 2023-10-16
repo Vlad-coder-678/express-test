@@ -1,16 +1,18 @@
 // external imports
-import React, { StrictMode } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 
 // internal imports
-import App from "./App";
+// public
 import "./public/styles/global.scss";
+// components
+import App from "./App";
 
 const container = document.getElementById("root");
 const root = ReactDOM.createRoot(container);
 
 root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+  // <StrictMode>
+  <App />
+  // </StrictMode>
 );

@@ -6,6 +6,7 @@ import React from "react";
 import "./styles.scss";
 
 const CardComponent = ({
+  activePoints,
   point: {
     address,
     budgets,
@@ -24,14 +25,15 @@ const CardComponent = ({
   };
 
   return (
-    <div className="card">
+    <div className={activePoints.some((point) => point.address === address) ? "card card-active" : "card"}>
       <p className="card-title">
         {address}
       </p>
-      <div className="card-button-container">
+      <div className="card-buttons-container">
         {budgets.map((budget) => (
           <button
-            className="card-button"
+            className={activePoints.some((point) => (point.address === address && point.budgets.includes(budget)))
+              ? "card-button card-button-active" : "card-button"}
             key={`${address} ${budget}`}
             onClick={() => handleTogglePoint(budget)}
             type="button"

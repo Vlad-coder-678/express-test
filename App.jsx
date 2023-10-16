@@ -2,15 +2,32 @@
 import React from "react";
 
 // internal imports
+// hooks
+import useActivePoints from "./hooks/useActivePoints";
 // components
-import HeadComponent from "./components/layout/HeadComponent";
-import LayoutComponent from "./components/layout";
+import MapComponent from "./components/MapComponent";
+import AddressListComponent from "./components/AddressListComponent";
 
-const App = () => (
-  <>
-    <HeadComponent />
-    <LayoutComponent />
-  </>
-);
+const App = () => {
+  const {
+    activePoints,
+    points,
+    togglePoint,
+  } = useActivePoints();
+
+  return (
+    <div className="container">
+      <AddressListComponent
+        activePoints={activePoints}
+        points={points}
+        togglePoint={togglePoint}
+      />
+      <MapComponent
+        activePoints={activePoints}
+        points={points}
+      />
+    </div>
+  );
+};
 
 export default App;

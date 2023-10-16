@@ -8,12 +8,14 @@ import CardComponent from "../CardComponent";
 import "./styles.scss";
 
 const AddressListComponent = ({
+  activePoints,
   points,
   togglePoint,
 }) => (
   <div className="cards-container">
     {points.map((point) => (
       <CardComponent
+        activePoints={activePoints}
         key={point.address}
         point={point}
         togglePoint={togglePoint}
