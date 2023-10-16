@@ -8,3 +8,9 @@
   border-radius: $map-container-border-radius;
   overflow: hidden;
 }
+
+@media (max-width: 900px) {
+  .map-container {
+    margin: 0 auto;
+  }
+}

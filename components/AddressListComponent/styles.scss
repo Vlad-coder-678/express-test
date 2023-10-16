@@ -4,3 +4,9 @@
   flex-direction: column;
   gap: 9px;
 }
+
+@media (max-width: 900px) {
+  .cards-container {
+    width: 100%;
+  }
+}

@@ -38,8 +38,17 @@ button {
   width: 100%;
   max-width: 1000px;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   gap: 3px;
   margin: 20px auto;
   padding: 14px 10px 14px 7px;
+}
+
+@media (max-width: 900px) {
+  .container {
+    max-width: 100%;
+    flex-direction: column;
+    padding: 10px;
+  }
 }
